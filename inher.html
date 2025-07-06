@@ -1,0 +1,562 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Python Animal Kingdom: Inheritance & Polymorphism Challenge!</title>
+  <script src="https://cdn.jsdelivr.net/pyodide/v0.23.4/full/pyodide.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --primary-color: #00796b; /* Teal */
+      --secondary-color: #004d40; /* Darker Teal */
+      --accent-color: #FF9800; /* Orange for challenges/buttons */
+      --success-color: #4CAF50; /* Green */
+      --error-color: #F44336; /* Red */
+      --bg-light: #e0f7fa; /* Light Blue */
+      --bg-dark: #2b2b2b; /* Code Editor Background */
+      --text-light: #f8f8f2; /* Code Editor Text */
+      --text-dark: #333;
+      --border-radius: 8px;
+    }
+
+    body {
+      font-family: 'Roboto', sans-serif;
+      background-color: var(--bg-light);
+      padding: 20px;
+      color: var(--text-dark);
+      line-height: 1.6;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-height: 100vh;
+      margin: 0;
+    }
+
+    h1 {
+      font-family: 'Press Start 2P', cursive;
+      color: var(--primary-color);
+      text-align: center;
+      font-size: 2.2em;
+      margin-bottom: 25px;
+      text-shadow: 3px 3px 0px rgba(0,0,0,0.1);
+      letter-spacing: -1px;
+    }
+
+    h2, h3 {
+      color: var(--secondary-color);
+      margin-top: 25px;
+      margin-bottom: 15px;
+    }
+
+    .container {
+      background-color: #ffffff;
+      padding: 30px;
+      border-radius: var(--border-radius);
+      box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+      max-width: 900px;
+      width: 100%;
+      box-sizing: border-box;
+      margin-bottom: 20px;
+    }
+
+    .game-stats {
+      background-color: #fffde7;
+      border: 2px solid var(--accent-color);
+      padding: 15px;
+      border-radius: var(--border-radius);
+      margin-bottom: 20px;
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      font-size: 1.1em;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+      flex-wrap: wrap;
+    }
+    .stat-item {
+      text-align: center;
+      padding: 5px 15px;
+    }
+    .stat-value {
+      font-size: 1.6em;
+      font-weight: bold;
+      color: var(--accent-color);
+      display: block;
+      margin-top: 5px;
+      font-family: 'Press Start 2P', cursive;
+    }
+
+    .explanation, .lesson-section, .reflection {
+      background-color: #e0f2f7;
+      padding: 15px 20px;
+      border-left: 6px solid #00bcd4;
+      border-radius: var(--border-radius);
+      margin-top: 20px;
+      box-shadow: 2px 2px 8px rgba(0,0,0,0.08);
+    }
+
+    .quests-section {
+      background-color: #f7fcfd; /* Slightly different background for quests */
+      border: 2px dashed var(--primary-color);
+      padding: 25px;
+      border-radius: var(--border-radius);
+      margin-top: 30px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    }
+
+    textarea {
+      width: 100%;
+      height: 280px; /* Slightly taller */
+      font-family: 'Roboto Mono', monospace; /* Modern monospace */
+      font-size: 15px;
+      background: var(--bg-dark);
+      color: var(--text-light);
+      border: none;
+      padding: 15px;
+      border-radius: var(--border-radius);
+      margin-top: 15px;
+      box-shadow: inset 1px 1px 5px rgba(0,0,0,0.2);
+      resize: vertical; /* Allow vertical resizing */
+    }
+
+    .button-group {
+      display: flex;
+      gap: 15px;
+      margin-top: 15px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    button {
+      padding: 12px 25px;
+      font-size: 1.1em;
+      border-radius: var(--border-radius);
+      border: none;
+      cursor: pointer;
+      transition: background-color 0.2s ease, transform 0.1s ease, box-shadow 0.2s ease;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+      font-weight: bold;
+    }
+    button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 12px rgba(0,0,0,0.2);
+    }
+    button.run { background: var(--success-color); color: white; }
+    button.run:hover { background-color: #4CAF50; }
+    button.hint { background: #607D8B; color: white; } /* Blue Grey */
+    button.hint:hover { background-color: #546E7A; }
+    button:disabled {
+      background-color: #cccccc;
+      cursor: not-allowed;
+      box-shadow: none;
+      transform: none;
+    }
+
+    pre {
+      background: #333;
+      color: #a8e063;
+      padding: 15px;
+      white-space: pre-wrap;
+      margin-top: 20px;
+      border-radius: var(--border-radius);
+      box-shadow: inset 1px 1px 5px rgba(0,0,0,0.2);
+      min-height: 50px; /* Ensure it's visible */
+    }
+
+    ul {
+      margin-top: 15px;
+      padding-left: 25px;
+      list-style: none; /* Remove default bullet points */
+    }
+    li {
+      margin-bottom: 12px;
+      position: relative;
+      padding-left: 30px; /* Space for custom bullet */
+    }
+    li::before {
+      content: '⚡️'; /* Custom bullet point */
+      position: absolute;
+      left: 0;
+      color: var(--accent-color);
+    }
+
+    .feedback {
+      margin-top: 15px;
+      padding: 12px 15px;
+      border-radius: var(--border-radius);
+      font-weight: bold;
+      animation: fadeIn 0.5s;
+    }
+    .feedback.success {
+      background-color: #d4edda;
+      color: var(--success-color);
+      border: 1px solid #c3e6cb;
+    }
+    .feedback.error {
+      background-color: #f8d7da;
+      color: var(--error-color);
+      border: 1px solid #f5c6cb;
+    }
+    .feedback.info {
+      background-color: #e3f2fd;
+      color: #2196F3;
+      border: 1px solid #bbdefb;
+    }
+
+    .quest-item {
+      background-color: #ffffff;
+      border: 1px solid #ddd;
+      padding: 15px;
+      border-radius: var(--border-radius);
+      margin-bottom: 15px;
+      display: flex; /* Keep flex for structure */
+      flex-direction: column; /* Stack title and description */
+      align-items: flex-start; /* Align text to the left */
+      transition: background-color 0.3s ease;
+    }
+    .quest-item.completed {
+      background-color: #e8f5e9; /* Lighter green for completed */
+      border-color: var(--success-color);
+    }
+    .quest-status {
+      font-weight: bold;
+      color: var(--error-color); /* Red for incomplete */
+      margin-top: 10px; /* Space from description */
+    }
+    .quest-item.completed .quest-status {
+      color: var(--success-color); /* Green for complete */
+    }
+    /* .quest-check-button is now removed, no need for its styles */
+    .quest-item h3 {
+      margin: 0;
+      padding-right: 15px; /* Space between title and status */
+      display: flex;
+      align-items: center;
+      width: 100%; /* Take full width to align status to end */
+      justify-content: space-between;
+    }
+    .quest-description {
+      font-size: 0.95em;
+      margin-top: 5px;
+      color: #555;
+    }
+
+    /* Hint System */
+    .hint-container {
+        margin-top: 15px;
+        background-color: #fff3e0; /* Light orange background */
+        border: 1px dashed var(--accent-color);
+        padding: 10px;
+        border-radius: var(--border-radius);
+        display: none; /* Hidden by default */
+        font-style: italic;
+        color: #7b4c00; /* Darker orange text */
+    }
+
+    /* Trophy animation - still here but won't be triggered automatically */
+    @keyframes bounce {
+        0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+        40% { transform: translateY(-10px); }
+        60% { transform: translateY(-5px); }
+    }
+    .trophy-image {
+      width: 30px;
+      height: auto;
+      vertical-align: middle;
+      margin-left: 10px;
+      display: none;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>🏆 Python Animal Kingdom: Inheritance & Polymorphism Challenge! 🏆</h1>
+
+  <div class="container game-stats">
+    <div class="stat-item">
+      Level: <span id="level" class="stat-value">Free Play</span>
+    </div>
+    <div class="stat-item">
+      Quests Completed: <span id="quests-completed" class="stat-value">Manual Check</span>
+    </div>
+    <div class="stat-item">
+      Score: <span id="score" class="stat-value">N/A</span>
+    </div>
+  </div>
+
+  <div class="container explanation">
+    <h2>📚 Welcome to the Animal Kingdom!</h2>
+    <p>Your mission, brave coder, is to master Inheritance and Polymorphism to help manage our diverse animal population! Think of Inheritance as creating new animal blueprints that automatically get all the basic animal features, then you add their unique traits.</p>
+    <p>And Polymorphism? That's the magic trick where one command (like `speak()`) works differently for each animal, making your code flexible and powerful!</p>
+    <p>Below is your main coding terminal. You'll write all your Python code there. Use the "Execute Code" button to test your solutions. You'll manually check the output to see if you've completed the quests!</p>
+  </div>
+
+  ---
+
+  <div class="container lesson-section">
+    <h2>🐍 Understanding the Core Concepts</h2>
+
+    <h3>What is Inheritance?</h3>
+    <p>Inheritance is a fundamental concept in Object-Oriented Programming (OOP) where a new class (a "child" or "derived" class) is created from an existing class (a "parent" or "base" class). The child class inherits all the attributes (variables) and methods (functions) of its parent. This promotes code reusability and establishes a natural "is-a" relationship (e.g., a `Dog` is an `Animal`).</p>
+    <ul>
+      <li>Syntax:
+        <pre><code>class ParentClass:
+    # parent attributes and methods
+
+class ChildClass(ParentClass): # ChildClass inherits from ParentClass
+    # child-specific attributes and methods</code></pre>
+      </li>
+      <li>Why use it? Imagine you're building a game with different types of characters. Instead of writing separate `move()`, `eat()`, and `sleep()` functions for every character, you can create a base `Character` class with these common behaviors. Then, `Warrior`, `Mage`, and `Archer` classes can inherit from `Character`, automatically gaining these abilities, and you only need to add their unique skills.</li>
+    </ul>
+
+    <h3>What is Polymorphism?</h3>
+    <p>Polymorphism means "many forms." In Python, it allows objects of different classes to be treated as objects of a common superclass. It's most commonly seen through method overriding, where a child class provides a specific implementation for a method that is already defined in its parent class. This means you can call the same method (`speak()`, for instance) on different objects, and each object will respond in its own unique way.</p>
+    <ul>
+      <li>How it works: When you call a method on an object, Python checks the object's class first. If the method exists there, it uses that version. If not, it looks up the inheritance chain to the parent class, and so on, until it finds the method.</li>
+      <li>Why use it? Polymorphism makes your code flexible and extensible. You can write generic code that operates on a collection of objects (like a list of `Animal` objects) without needing to know the specific type of each object. Each object simply performs its own version of the shared method. This makes adding new animal types (or character types, etc.) much easier without changing existing code.</li>
+    </ul>
+  </div>
+
+  ---
+
+  <div class="container">
+    <h2>💻 Your Coding Terminal</h2>
+    <textarea id="python-code">
+# Your Base Camp: The Animal Kingdom Blueprint!
+class Animal:
+    def __init__(self, name):
+        self.name = name
+
+    def speak(self):
+        return f"{self.name} makes a sound."
+
+# Your First Recruits: Dog and Cat!
+class Dog(Animal): # Dog inherits from Animal!
+    def speak(self): # Overriding speak() for Dog
+        return f"{self.name} says Woof!"
+
+class Cat(Animal): # Cat also inherits from Animal!
+    def speak(self): # Overriding speak() for Cat
+        return f"{self.name} says Meow!"
+
+# Let's see them in action!
+a = Animal("Mysterious Creature")
+d = Dog("Rex the Brave")
+c = Cat("Luna the Sneaky")
+
+print(a.speak())
+print(d.speak())
+print(c.speak())
+    </textarea>
+
+    <div class="button-group">
+      <button class="run" onclick="runCode()">▶️ Execute Code</button>
+      <button class="hint" onclick="showHint()">❓ Get a Hint</button>
+    </div>
+    <pre id="output">Command output will appear here...</pre>
+    <div id="hint-text" class="hint-container">
+    </div>
+  </div>
+
+  <div class="container quests-section">
+    <h2>🎯 Your Current Quests!</h2>
+    <p>Complete these coding challenges by using the coding terminal and observing the output. You're in charge of verifying your success!</p>
+
+    <div id="quest1" class="quest-item">
+      <h3>Quest 1: Rename the Recruits! <span id="quest1-status" class="quest-status">Status: Manual Check</span></h3>
+      <div class="quest-description">Change the animal names in the `print` statements. Give "Rex" a more heroic name and "Luna" a more mischievous one.</div>
+    </div>
+
+    <div id="quest2" class="quest-item">
+      <h3>Quest 2: Recruit a New Species - The Bird! <span id="quest2-status" class="quest-status">Status: Manual Check</span></h3>
+      <div class="quest-description">Add a new class called `Bird` that inherits from `Animal`. Make its `speak()` method return “Tweet!”.</div>
+    </div>
+
+    <div id="quest3" class="quest-item">
+      <h3>Quest 3: The Animal Parade! <span id="quest3-status" class="quest-status">Status: Manual Check</span></h3>
+      <div class="quest-description">Create a `list` named `my_animals` with instances of all your animal objects (including your new Bird!), then use a `for` loop to call the `speak()` method for each one and print the result. Watch polymorphism in action!</div>
+    </div>
+
+    <div id="quest4" class="quest-item">
+      <h3>Quest 4: The Silent Beast! <span id="quest4-status" class="quest-status">Status: Manual Check</span></h3>
+      <div class="quest-description">Create a new class called `Snake` that also inherits from `Animal`. For the `Snake`, its `speak()` method should return "..." (an empty sound, representing a hiss or silence). Then, add a `Snake` instance to your `my_animals` list from Quest 3.</div>
+    </div>
+
+    <div id="feedback-area">
+    </div>
+
+  </div>
+
+  ---
+
+  <div class="container reflection">
+    <h2>🏦 Challenge Question: Bank Activities (Template Only)</h2>
+    <p>Imagine you are building a system for a bank. You have different types of bank accounts (e.g., `SavingsAccount`, `CheckingAccount`).</p>
+    <p>Your Challenge: How would you use inheritance and polymorphism to design the classes for these bank accounts, specifically considering a common operation like `deposit()` or `withdraw()`? Think about what general attributes and methods the base `BankAccount` class would have, and how `SavingsAccount` or `CheckingAccount` might override or extend those behaviors.</p>
+    <p>Consider the template below and think about what you'd put in each section. (No need to write actual code for this section, just plan it out in your head or on paper!)</p>
+    <pre><code class="language-python"># Base Class: What do ALL bank accounts have in common?
+class BankAccount:
+    def __init__(self, account_number, balance=0):
+        # ... common attributes like account_number, balance
+        pass
+
+    def deposit(self, amount):
+        # ... common deposit logic
+        pass
+
+    def withdraw(self, amount):
+        # ... common withdrawal logic (maybe with some base checks)
+        pass
+
+    # What else might all bank accounts need?
+
+
+# Child Class 1: How does a SavingsAccount differ?
+class SavingsAccount(BankAccount):
+    def __init__(self, account_number, balance=0, interest_rate=0.01):
+        # ... call parent constructor
+        # ... add specific attributes like interest_rate
+        pass
+
+    def apply_interest(self):
+        # ... new method specific to savings
+        pass
+
+    # Does deposit or withdraw need to be different for a SavingsAccount?
+
+
+# Child Class 2: How does a CheckingAccount differ?
+class CheckingAccount(BankAccount):
+    def __init__(self, account_number, balance=0, overdraft_limit=100):
+        # ... call parent constructor
+        # ... add specific attributes like overdraft_limit
+        pass
+
+    def withdraw(self, amount):
+        # ... how would withdrawal be different here due to overdraft?
+        pass
+
+    # What other unique behaviors might a CheckingAccount have?
+</code></pre>
+  </div>
+
+  ---
+
+  <div class="container reflection">
+    <h2>💬 Strategy Session: Reflection Questions</h2>
+    <ul>
+      <li>What powers does a child class automatically gain from its parent class?</li>
+      <li>What happens when a child class uses the same method name (like `speak()` or `withdraw()`) as its parent? How does this make our code flexible?</li>
+      <li>Imagine you're building a game with different types of characters (heroes, villains, monsters). How could inheritance and polymorphism make your game easier to build and expand?</li>
+    </ul>
+  </div>
+
+  <script>
+    let pyodideReady = false;
+    let pyodideInstance;
+    let score = 0; // Score and quests system is largely disabled for manual check
+    const quests = {
+      quest1: { completed: false, score: 0, hint: "Just find the `print` lines and change the text inside the quotes for `Dog` and `Cat`!" },
+      quest2: { completed: false, score: 0, hint: "Remember how `Dog` and `Cat` are made? You'll need `class Bird(Animal):` and then a `speak` method inside it that returns 'Tweet!'." },
+      quest3: { completed: false, score: 0, hint: "Start with `my_animals = [Dog('Buddy'), Cat('Whiskers'), Bird('Chirpy')]`. Then, use a `for` loop: `for animal in my_animals: print(animal.speak())`." },
+      quest4: { completed: false, score: 0, hint: "Similar to how you made the Bird class, create `class Snake(Animal):`. Its `speak()` method should return just `\"...\"`. Don't forget to add a `Snake` instance to your `my_animals` list too!" }
+    };
+    const TOTAL_CHECKABLE_QUESTS = 4; // Now there are 4 manual quests
+    let completedCheckableQuests = 0; // This will remain 0 unless you manually set it
+
+    const updateGameStats = () => {
+      // These stats won't update automatically without automated checks
+      document.getElementById("quests-completed").textContent = `Manual Check`;
+      document.getElementById("score").textContent = 'N/A'; // No auto-score
+      document.getElementById("level").textContent = 'Free Play';
+    };
+
+    const showFeedback = (message, type) => {
+      const feedbackArea = document.getElementById("feedback-area");
+      feedbackArea.innerHTML = `<div class="feedback ${type}">${message}</div>`;
+      setTimeout(() => {
+        feedbackArea.innerHTML = '';
+      }, 7000);
+    };
+
+    async function loadPyodideOnce() {
+      if (!pyodideReady) {
+        showFeedback("⏳ Preparing the Python training arena...", 'info');
+        pyodideInstance = await loadPyodide();
+        pyodideReady = true;
+        showFeedback("✅ Python training arena ready! Your adventure begins.", 'success');
+        updateGameStats(); // Update stats display for manual mode
+      }
+    }
+
+    loadPyodideOnce();
+
+    async function runCode() {
+      const outputElement = document.getElementById("output");
+      if (!pyodideReady) {
+        showFeedback("⏳ Python environment not yet loaded. Please wait...", 'info');
+        await loadPyodideOnce();
+      }
+      outputElement.textContent = "⏳ Executing your commands...";
+      try {
+        const code = document.getElementById("python-code").value;
+        let pythonOutput = [];
+        pyodideInstance.setStdout({
+            batched: (msg) => { pythonOutput.push(msg); }
+        });
+        // Added a consistent indentation for injected code to prevent IndentationError
+        const indentedCode = code.split('\n').map(line => '    ' + line).join('\n');
+        await pyodideInstance.runPythonAsync(`
+try:
+${indentedCode}
+except Exception as e:
+    print(f"Error: {e}")
+`);
+        outputElement.textContent = pythonOutput.join('\n') || "✅ Commands executed successfully. No direct output.";
+        pyodideInstance.setStdout({ batched: console.log }); // Reset stdout
+      } catch (err) {
+        outputElement.textContent = "❌ Execution Error:\n" + err;
+        showFeedback(`❌ Code execution failed! Error: ${err.message || err}. Check your Python syntax.`, 'error');
+      }
+    }
+
+    function showHint() {
+        const hintContainer = document.getElementById('hint-text');
+        const currentQuest = getCurrentActiveQuest(); // Function to determine current quest (simple logic for now)
+        if (quests[currentQuest] && quests[currentQuest].hint) {
+            hintContainer.textContent = `Hint for ${currentQuest.replace('quest', 'Quest ')}: ${quests[currentQuest].hint}`;
+            hintContainer.style.display = 'block';
+        } else {
+            hintContainer.textContent = "No specific hint for this stage right now, but keep trying!";
+            hintContainer.style.display = 'block';
+        }
+    }
+
+    // A very simple way to determine the "current" quest for hints.
+    // Since there are no auto-checks, this will just cycle or you can define an order.
+    let hintCounter = 0;
+    const hintOrder = ['quest1', 'quest2', 'quest3', 'quest4']; // Updated hint order to include quest4
+
+    function getCurrentActiveQuest() {
+        const questId = hintOrder[hintCounter % hintOrder.length];
+        hintCounter++; // Move to the next hint for next click
+        return questId;
+    }
+
+    // Initialize display of quest statuses (they will all be "Manual Check")
+    document.addEventListener('DOMContentLoaded', () => {
+        updateGameStats();
+        // Set all quest statuses to "Manual Check"
+        document.getElementById('quest1-status').textContent = 'Status: Manual Check';
+        document.getElementById('quest2-status').textContent = 'Status: Manual Check';
+        document.getElementById('quest3-status').textContent = 'Status: Manual Check';
+        document.getElementById('quest4-status').textContent = 'Status: Manual Check'; // Set status for the new quest
+
+        // Hide trophies as they are tied to automated completion
+        const trophies = document.querySelectorAll('.trophy-image');
+        trophies.forEach(trophy => trophy.style.display = 'none');
+    });
+  </script>
+
+</body>
+</html>
